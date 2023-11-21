@@ -1,19 +1,32 @@
 import Comments from "@/components/Comments";
 import FormComment from "@/components/FormComment";
+import prisma from "@/lib/db";
+import { FC } from "react";
 
-const SingleBlogPage = () => {
+interface SingleBlogPageProps {
+  params: {
+    id: string;
+  };
+}
+
+const SingleBlogPage: FC<SingleBlogPageProps> = async ({ params }) => {
+  const post = await prisma.post.findFirst({
+    where: {
+      id: params.id,
+    },
+    include: {
+      author: true,
+    },
+  });
+  console.log(post);
   return (
     <div className="max-w-4xl mx-auto py-8">
-      <h1 className="text-3xl font-bold">Post onew</h1>
-      <p>Written By: John Doe</p>
-      <div className="mt-4">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Maiores ex
-        saepe cumque alias blanditiis aut assumenda impedit similique incidunt
-        nam!
-      </div>
+      <h1 className="text-3xl font-bold">{post?.title}</h1>
+      <p>Written By: {post?.author?.name}</p>
+      <div className="mt-4">{post?.content}</div>
 
-      <Comments />
-      <FormComment />
+      <Comments postId={params.id} />
+      <FormComment postId={params.id} />
     </div>
   );
 };

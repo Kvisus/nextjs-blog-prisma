@@ -1,16 +1,37 @@
 "use client";
 import { ButtonStyle, inputStyle } from "@/styles/styles";
-import { ChangeEvent, useState } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FC, useState } from "react";
 
-const FormComment = () => {
+interface FormCommentProps {
+  postId: string;
+}
+const FormComment: FC<FormCommentProps> = ({ postId }) => {
   const [comment, setComment] = useState("");
+  const router = useRouter();
+  const { data } = useSession();
 
   const handleCommentChange = (e: ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
 
-  const handleSubmitComment = () => {
-    console.log(comment);
+  const handleSubmitComment = async () => {
+    if (comment.trim() !== "") {
+      try {
+        const newComment = await axios.post(`/api/comments`, {
+          postId,
+          text: comment,
+        });
+        if (newComment.status === 200) {
+          setComment("");
+          router.refresh();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (
@@ -32,6 +53,7 @@ const FormComment = () => {
           className={inputStyle}
         />
         <button
+          disabled={!data?.user.email}
           onClick={handleSubmitComment}
           className={`${ButtonStyle}, w-1/3 mt-2`}
         >
