@@ -53,7 +53,7 @@ const FormComment: FC<FormCommentProps> = ({ postId }) => {
           className={inputStyle}
         />
         <button
-          disabled={!data?.user.email}
+          disabled={!data?.user?.email}
           onClick={handleSubmitComment}
           className={`${ButtonStyle}, w-1/3 mt-2`}
         >
