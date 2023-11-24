@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import prisma from "@/lib/db";
-import { Prisma } from "@prisma/client";
 
 // TODO придумать как сменить интерфейс на подсос данных из Prisma
 interface Post {
